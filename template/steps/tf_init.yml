@@ -1,0 +1,66 @@
+# parameters:
+# - name: infraType
+#   displayName: infraType
+# - name: env
+#   displayName: Environment
+
+#   steps:
+#   - task: TerraformInstaller@0
+#     displayName: 'Install Terraform'
+#     inputs:
+#       terraformVersion: '1.6.3'
+#   - script: |      
+#       echo "Running validation for $(service_connection)"
+#   - task: TerraformTaskV4@4
+#     displayName: 'Terraform Init'
+#     inputs:
+#       provider: 'azurerm'
+#       command: 'init'
+#       workingDirectory: '$(System.DefaultWorkingDirectory)'
+#       # backendServiceArm: '$(service_connection)'
+#       ${{ if eq(parameters.env, 'dev') }}:
+#         backendServiceArm: "azure-sc"
+#       ${{ if eq(parameters.env, 'qa') }}:
+#         backendServiceArm: "azure-sc"
+#       ${{ if eq(parameters.env, 'prod') }}:
+#         backendServiceArm: "A-prod-svc"
+#       backendAzureRmResourceGroupName: '$(resource_group)'
+#       backendAzureRmStorageAccountName: '$(storage_account)'
+#       backendAzureRmContainerName: '$(container_name)'
+#       backendAzureRmKey: '${{parameters.infraType}}_terraform.tfstate' 
+
+
+parameters:
+  - name: infraType
+    displayName: infraType
+  - name: env
+    displayName: Environment
+
+# jobs:
+  # - job: TerraformInit
+  #   displayName: 'Terraform Init'
+  #   pool: 'Sravan'
+
+steps:
+  # - task: TerraformInstaller@0
+  #   displayName: 'Install Terraform'
+  #   inputs:
+  #     terraformVersion: '1.7.4'
+  - script: |
+      echo "Running validation for $(service_connection)"
+  - task: TerraformTaskV4@4
+    displayName: 'Terraform Init'
+    inputs:
+      provider: 'azurerm'
+      command: 'init'
+      workingDirectory: '$(System.DefaultWorkingDirectory)'
+      # ${{ if eq(parameters.env, 'dev') }}:
+      #   backendServiceArm: "azure-sc"
+      ${{ if eq(parameters.env, 'qa') }}:
+        backendServiceArm: "azure-sc"
+      # ${{ if eq(parameters.env, 'prod') }}:
+      #   backendServiceArm: "A-prod-svc"
+      backendAzureRmResourceGroupName: '$(resource_group)'
+      backendAzureRmStorageAccountName: '$(storage_account)'
+      backendAzureRmContainerName: '$(container_name)'
+      backendAzureRmKey: '${{parameters.infraType}}_terraform.tfstate'
